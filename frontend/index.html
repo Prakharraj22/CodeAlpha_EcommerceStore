@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AroraCart — Premium Tech & Smart Electronics Store India</title>
+  <meta name="description" content="Shop Next-Gen Tech at AroraCart. Discover premium wireless audio, smartwatches, gaming peripherals, smart home, cameras & more. Free shipping across India on orders over ₹1,999." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <!-- ======================== HEADER ======================== -->
+  <header class="header" id="main-header">
+    <nav class="navbar">
+      <a href="/index.html" class="logo" aria-label="AroraCart Home">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">AroraCart</span>
+      </a>
+
+      <div class="search-box" role="search">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input
+          type="text"
+          id="search-input"
+          class="search-input"
+          placeholder="Search headphones, smartwatches, keyboards…"
+          autocomplete="off"
+          aria-label="Search products"
+        />
+        <button id="clear-search-btn" class="clear-search-btn" aria-label="Clear search" style="display:none;">✕</button>
+      </div>
+
+      <ul class="nav-links" role="navigation" aria-label="Main navigation">
+        <li><a href="/index.html" class="nav-link active" aria-current="page">Store</a></li>
+        <li>
+          <a href="/cart.html" class="nav-link nav-cart-link" aria-label="Shopping cart">
+            <span class="nav-icon">🛒</span>
+            <span class="nav-label">Cart</span>
+            <span id="cart-badge" class="cart-badge" aria-live="polite">0</span>
+          </a>
+        </li>
+        <li>
+          <a href="/wishlist.html" class="nav-link" aria-label="My wishlist">
+            <span class="nav-icon">♥</span>
+            <span class="nav-label">Wishlist</span>
+            <span id="wishlist-badge" class="wishlist-badge" aria-live="polite">0</span>
+          </a>
+        </li>
+        <li id="auth-nav-container" class="auth-nav-slot">
+          <!-- Dynamically populated by auth.js -->
+        </li>
+      </ul>
+
+      <!-- Mobile menu toggle -->
+      <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle mobile menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+
+    <!-- Mobile nav drawer -->
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer" aria-hidden="true">
+      <a href="/index.html" class="mobile-nav-link active">🏠 Store</a>
+      <a href="/cart.html" class="mobile-nav-link">🛒 Cart</a>
+      <a href="/wishlist.html" class="mobile-nav-link">♥ Wishlist</a>
+      <a href="/orders.html" class="mobile-nav-link">📦 Orders</a>
+      <a href="/login.html" class="mobile-nav-link" id="mobile-login-link">🔑 Login</a>
+    </div>
+  </header>
+
+  <!-- ======================== MAIN ======================== -->
+  <main class="container fade-in" id="main-content">
+
+    <!-- Hero Banner -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="hero-content">
+        <p class="hero-tag">✨ India's #1 Tech Destination</p>
+        <h1 id="hero-heading" class="hero-heading">
+          Next-Gen Tech &amp;<br/>
+          <span class="gradient-text">Premium Wearables</span>
+        </h1>
+        <p class="hero-subtext">
+          Upgrade your digital lifestyle with spatial audio, high-refresh smartwatches,
+          mechanical keyboards, and premium cameras — with fast shipping across India.
+        </p>
+        <div class="hero-pills" aria-label="Promotions">
+          <span class="promo-pill purple">⚡ Free Shipping &gt; ₹1,999</span>
+          <span class="promo-pill green">🏷️ Use ARORA10 for 10% Off</span>
+          <span class="promo-pill cyan">🎮 New Gaming Gear Arrived</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls Bar -->
+    <section class="controls-bar" aria-label="Product filters and sorting">
+      <div class="controls-left">
+        <div id="categories-pills" class="categories-pills" role="list" aria-label="Category filters">
+          <!-- Skeleton placeholders while loading -->
+          <span class="pill skeleton-pill"></span>
+          <span class="pill skeleton-pill"></span>
+          <span class="pill skeleton-pill"></span>
+          <span class="pill skeleton-pill"></span>
+        </div>
+      </div>
+
+      <div class="controls-right">
+        <div class="filter-controls">
+          <button class="btn btn-filter" id="toggle-filters-btn" aria-expanded="false">
+            ⚙️ Filters
+          </button>
+          <div class="sort-wrapper">
+            <label for="sort-select" class="sr-only">Sort products by</label>
+            <select id="sort-select" class="sort-select" aria-label="Sort products">
+              <option value="newest">🕐 Newest First</option>
+              <option value="price-asc">💸 Price: Low to High</option>
+              <option value="price-desc">💎 Price: High to Low</option>
+              <option value="rating-desc">⭐ Highest Rated</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Advanced Filters Panel -->
+    <section class="advanced-filters-panel" id="advanced-filters-panel" aria-hidden="true" hidden>
+      <div class="filter-group">
+        <label class="filter-label">Price Range (₹)</label>
+        <div class="price-range-inputs">
+          <input type="number" id="min-price" class="form-control price-input" placeholder="Min" min="0" />
+          <span class="price-range-dash">–</span>
+          <input type="number" id="max-price" class="form-control price-input" placeholder="Max" min="0" />
+          <button class="btn btn-outline btn-sm" id="apply-price-btn">Apply</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Minimum Rating</label>
+        <div class="rating-filter-options">
+          <label class="rating-option"><input type="radio" name="min-rating" value="" checked /> All Ratings</label>
+          <label class="rating-option"><input type="radio" name="min-rating" value="4.5" /> ⭐ 4.5+</label>
+          <label class="rating-option"><input type="radio" name="min-rating" value="4" /> ⭐ 4.0+</label>
+          <label class="rating-option"><input type="radio" name="min-rating" value="3.5" /> ⭐ 3.5+</label>
+        </div>
+      </div>
+
+      <button class="btn btn-outline btn-sm" id="reset-filters-btn">🔄 Reset All Filters</button>
+    </section>
+
+    <!-- Result count & Active filter chips -->
+    <div class="results-bar" id="results-bar" aria-live="polite">
+      <span id="results-count" class="results-count"></span>
+      <div id="active-filter-chips" class="active-filter-chips"></div>
+    </div>
+
+    <!-- Product Grid -->
+    <section aria-label="Product catalog" id="catalog-section">
+      <div id="product-grid" class="product-grid" aria-live="polite">
+        <!-- Skeleton cards while loading -->
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+    </section>
+
+    <!-- Pagination -->
+    <nav class="pagination-wrapper" id="pagination-wrapper" aria-label="Product page navigation" hidden>
+      <button class="btn btn-secondary btn-sm" id="prev-page-btn" disabled>← Prev</button>
+      <span id="page-indicator" class="page-indicator">Page 1</span>
+      <button class="btn btn-secondary btn-sm" id="next-page-btn">Next →</button>
+    </nav>
+
+  </main>
+
+  <!-- ======================== FOOTER ======================== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-text">⚡ AroraCart</span>
+        <p>India's Premium Tech &amp; Electronics Marketplace</p>
+      </div>
+      <div class="footer-links">
+        <a href="/index.html">Store</a>
+        <a href="/cart.html">Cart</a>
+        <a href="/orders.html">Orders</a>
+        <a href="/login.html">Login</a>
+      </div>
+      <div class="footer-copy">
+        <p>© 2026 AroraCart Inc. All Rights Reserved.</p>
+        <p style="font-size:0.8rem; color: var(--text-dim);">Built with Node.js · Express · MongoDB · Vanilla JS</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div id="toast-container" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- Scripts (order matters: utilities first) -->
+  <script src="/js/toast.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/cart.js"></script>
+  <script src="/js/wishlist.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>
