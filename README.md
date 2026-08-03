@@ -87,7 +87,6 @@ CodeAlpha_EcommerceStore/
 │   └── register.html        # Sign up page
 ├── .env.example
 ├── .gitignore
-├── vercel.json              # Vercel serverless deployment config
 └── README.md
 ```
 
