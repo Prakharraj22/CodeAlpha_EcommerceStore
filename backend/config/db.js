@@ -9,11 +9,7 @@ const connectDB = async () => {
     isConnected = true;
     console.log(`MongoDB connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error(`MongoDB connection error: ${error.message}`);
-    // Do not process.exit in serverless environments
-    if (process.env.NODE_ENV !== 'production') {
-      process.exit(1);
-    }
+    console.error(`⚠️ MongoDB connection error: ${error.message}`);
   }
 };
 

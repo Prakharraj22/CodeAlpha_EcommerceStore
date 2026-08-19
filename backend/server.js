@@ -53,15 +53,12 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-if (process.env.NODE_ENV !== 'production') {
-  connectDB().then(() => {
-    app.listen(PORT, () => {
-      console.log(`AroraCart Server running live on http://localhost:${PORT}`);
-    });
-  });
-} else {
-  // Ensure DB connection state in Vercel serverless mode
-  connectDB();
-}
+app.listen(PORT, () => {
+  console.log(`AroraCart Server running live on http://localhost:${PORT}`);
+});
+
+connectDB().catch(err => {
+  console.warn('⚠️ MongoDB Atlas connection warning:', err.message);
+});
 
 module.exports = app;
