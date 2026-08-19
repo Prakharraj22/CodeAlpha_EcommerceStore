@@ -1,10 +1,51 @@
+const mongoose = require('mongoose');
 const Product = require('../models/Product');
 const Review = require('../models/Review');
+const fallbackProducts = require('../config/fallbackProducts');
+
+// Helper to filter in-memory fallback items
+const filterFallbackProducts = ({ category, search, sort, minPrice, maxPrice }) => {
+  let list = [...fallbackProducts];
+
+  if (category && category !== 'All') {
+    list = list.filter((p) => p.category.toLowerCase() === category.toLowerCase());
+  }
+
+  if (search) {
+    const s = search.toLowerCase();
+    list = list.filter(
+      (p) =>
+        p.title.toLowerCase().includes(s) ||
+        p.description.toLowerCase().includes(s) ||
+        p.brand.toLowerCase().includes(s)
+    );
+  }
+
+  if (minPrice) {
+    list = list.filter((p) => p.price >= Number(minPrice));
+  }
+  if (maxPrice) {
+    list = list.filter((p) => p.price <= Number(maxPrice));
+  }
+
+  if (sort === 'price-asc') list.sort((a, b) => a.price - b.price);
+  else if (sort === 'price-desc') list.sort((a, b) => b.price - a.price);
+  else if (sort === 'rating-desc') list.sort((a, b) => b.rating - a.rating);
+
+  const categories = [...new Set(fallbackProducts.map((p) => p.category))];
+  return { products: list, categories };
+};
 
 // @desc    Fetch all products with search, category filter, and sorting
 // @route   GET /api/products
 exports.getProducts = async (req, res) => {
   try {
+    // If DB connection is not fully open (1 = CONNECTED), use instant fallback
+    if (mongoose.connection.readyState !== 1) {
+      const fallbackData = filterFallbackProducts(req.query);
+      return res.json(fallbackData);
+    }
+
     const { category, search, sort, minPrice, maxPrice } = req.query;
     let query = {};
 
@@ -31,12 +72,20 @@ exports.getProducts = async (req, res) => {
     else if (sort === 'price-desc') sortOptions = { price: -1 };
     else if (sort === 'rating-desc') sortOptions = { rating: -1 };
 
-    const products = await Product.find(query).sort(sortOptions);
-    const categories = await Product.distinct('category');
+    const dbProducts = await Product.find(query).sort(sortOptions);
+    const dbCategories = await Product.distinct('category');
 
-    res.json({ products, categories });
+    if (dbProducts && dbProducts.length > 0) {
+      return res.json({ products: dbProducts, categories: dbCategories });
+    }
+
+    // Fallback if DB returns 0 items
+    const fallbackData = filterFallbackProducts(req.query);
+    res.json(fallbackData);
   } catch (error) {
-    res.status(500).json({ message: error.message || 'Error fetching products' });
+    console.warn('⚠️ Product DB query fallback triggered:', error.message);
+    const fallbackData = filterFallbackProducts(req.query);
+    res.json(fallbackData);
   }
 };
 
@@ -44,16 +93,28 @@ exports.getProducts = async (req, res) => {
 // @route   GET /api/products/:id
 exports.getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
+    if (mongoose.connection.readyState === 1) {
+      const product = await Product.findById(req.params.id);
+      if (product) {
+        const reviews = await Review.find({ product: req.params.id }).sort({ createdAt: -1 });
+        return res.json({ product, reviews });
+      }
     }
 
-    const reviews = await Review.find({ product: req.params.id }).sort({ createdAt: -1 });
+    // Search in fallback list
+    const fallbackProduct = fallbackProducts.find((p) => String(p._id) === String(req.params.id));
+    if (fallbackProduct) {
+      return res.json({ product: fallbackProduct, reviews: [] });
+    }
 
-    res.json({ product, reviews });
+    res.status(404).json({ message: 'Product not found' });
   } catch (error) {
-    res.status(500).json({ message: error.message || 'Error fetching product details' });
+    console.warn('⚠️ Product Detail DB query fallback triggered:', error.message);
+    const fallbackProduct = fallbackProducts.find((p) => String(p._id) === String(req.params.id));
+    if (fallbackProduct) {
+      return res.json({ product: fallbackProduct, reviews: [] });
+    }
+    res.status(404).json({ message: 'Product not found' });
   }
 };
 
