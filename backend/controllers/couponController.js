@@ -11,7 +11,15 @@ exports.applyCoupon = async (req, res) => {
 
     const coupon = await Coupon.findOne({ code: code.toUpperCase(), isActive: true });
     if (!coupon) {
-      return res.status(404).json({ message: 'Invalid or expired coupon code' });
+      return res.status(404).json({ message: 'Invalid or inactive coupon code' });
+    }
+
+    if (coupon.expiryDate && new Date(coupon.expiryDate) < new Date()) {
+      return res.status(400).json({ message: 'This coupon has expired' });
+    }
+
+    if (coupon.usageLimit !== null && coupon.usedCount >= coupon.usageLimit) {
+      return res.status(400).json({ message: 'This coupon usage limit has been reached' });
     }
 
     if (orderAmount < coupon.minOrderAmount) {

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Product Details — AroraCart</title>
-  <meta name="description" content="View product details, specifications, customer reviews, and related products on AroraCart." />
+  <title>My Wishlist — AroraCart</title>
+  <meta name="description" content="View and manage your saved electronics, track stock, and move items to cart." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -12,16 +12,17 @@
 </head>
 <body>
 
+  <!-- ======================== HEADER ======================== -->
   <header class="header">
     <nav class="navbar">
-      <a href="/index.html" class="logo">
+      <a href="/index.html" class="logo" aria-label="AroraCart Home">
         <span class="logo-icon">⚡</span>
         <span class="logo-text">AroraCart</span>
       </a>
 
       <div class="search-box" role="search">
         <span class="search-icon" aria-hidden="true">🔍</span>
-        <input type="text" id="search-input" class="search-input" placeholder="Search products…" onkeydown="if(event.key==='Enter'){ window.location.href='/index.html?q=' + encodeURIComponent(this.value); }" />
+        <input type="text" id="search-input" class="search-input" placeholder="Search products…" autocomplete="off" onkeydown="if(event.key==='Enter'){ window.location.href='/index.html?q=' + encodeURIComponent(this.value); }" />
       </div>
 
       <ul class="nav-links">
@@ -33,7 +34,7 @@
           </a>
         </li>
         <li>
-          <a href="/wishlist.html" class="nav-link">
+          <a href="/wishlist.html" class="nav-link active" aria-current="page">
             <span class="nav-icon">♥</span> Wishlist
             <span id="wishlist-badge" class="wishlist-badge">0</span>
           </a>
@@ -46,23 +47,26 @@
       </button>
     </nav>
 
+    <!-- Mobile Drawer -->
     <div class="mobile-nav-drawer" id="mobile-nav-drawer" aria-hidden="true">
       <a href="/index.html" class="mobile-nav-link">🏠 Store</a>
       <a href="/cart.html" class="mobile-nav-link">🛒 Cart</a>
-      <a href="/wishlist.html" class="mobile-nav-link">♥ Wishlist</a>
+      <a href="/wishlist.html" class="mobile-nav-link active">♥ Wishlist</a>
       <a href="/orders.html" class="mobile-nav-link">📦 Orders</a>
+      <a href="/login.html" class="mobile-nav-link" id="mobile-login-link">🔑 Login</a>
     </div>
   </header>
 
+  <!-- ======================== MAIN ======================== -->
   <main class="container fade-in">
-    <div id="product-detail-container">
-      <!-- Populated by product.js -->
+    <div id="wishlist-page-container">
+      <div class="skeleton-order-card" aria-hidden="true">
+        <div class="skeleton skeleton-text full" style="height:3rem;"></div>
+      </div>
     </div>
   </main>
 
-  <!-- Recently Viewed Products -->
-  <div id="recently-viewed-container" style="max-width:1200px;margin:0 auto;padding:0 1.5rem 2rem;"></div>
-
+  <!-- ======================== FOOTER ======================== -->
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand">
@@ -73,32 +77,16 @@
     </div>
   </footer>
 
-  <!-- Sticky Add-to-Cart Bar (appears on scroll) -->
-  <aside id="sticky-buy-bar" class="sticky-buy-bar" aria-label="Quick Checkout Bar">
-    <div class="sticky-buy-left">
-      <img id="sticky-thumb" src="" alt="Product" class="sticky-buy-thumb" />
-      <div>
-        <div id="sticky-title" class="sticky-buy-title">Product</div>
-        <div id="sticky-price" class="sticky-buy-price">₹0</div>
-      </div>
-    </div>
-    <div style="display:flex;gap:0.75rem;">
-      <button class="btn btn-primary" onclick="window.addDetailToCart()" id="sticky-cart-btn">
-        🛒 Add to Cart
-      </button>
-    </div>
-  </aside>
+  <div id="toast-container" aria-live="assertive"></div>
 
-  <div id="toast-container" aria-live="assertive" aria-atomic="true"></div>
-
+  <!-- Scripts -->
   <script src="/js/toast.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/cart.js"></script>
   <script src="/js/wishlist.js"></script>
-  <script src="/js/recentlyViewed.js"></script>
   <script src="/js/interactiveModals.js"></script>
-  <script src="/js/product.js"></script>
+  <script src="/js/wishlist-page.js"></script>
   <script src="/js/demoMode.js"></script>
 </body>
 </html>

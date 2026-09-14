@@ -18,4 +18,9 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Indexes for Search & Filtering Performance
+productSchema.index({ title: 'text', description: 'text', brand: 'text' });
+productSchema.index({ category: 1, price: 1 });
+productSchema.index({ rating: -1 });
+
 module.exports = mongoose.model('Product', productSchema);

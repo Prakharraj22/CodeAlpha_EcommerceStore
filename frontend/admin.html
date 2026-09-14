@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — AroraCart</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    body { background: var(--bg-base, #0f172a); }
+
+    .admin-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .admin-header .brand { font-size: 1.25rem; font-weight: 700; color: #38bdf8; }
+
+    .admin-nav { display: flex; gap: 0.5rem; }
+    .admin-nav button {
+      background: none; border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px; color: #94a3b8; padding: 0.4rem 1rem;
+      cursor: pointer; font-size: 0.875rem; transition: all 0.2s;
+    }
+    .admin-nav button.active, .admin-nav button:hover {
+      background: rgba(56,189,248,0.15); border-color: #38bdf8; color: #38bdf8;
+    }
+
+    .admin-wrapper { max-width: 1300px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; padding: 1.25rem;
+    }
+    .stat-card .stat-label { color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    .stat-card .stat-value { color: #f1f5f9; font-size: 1.8rem; font-weight: 700; }
+    .stat-card .stat-accent { color: #38bdf8; }
+
+    .section-title {
+      color: #f1f5f9; font-size: 1.1rem; font-weight: 600;
+      margin: 1.5rem 0 1rem; padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .admin-table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); }
+    table.admin-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    table.admin-table th {
+      background: rgba(56,189,248,0.08); color: #94a3b8;
+      padding: 0.75rem 1rem; text-align: left; font-weight: 600;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    table.admin-table td {
+      padding: 0.75rem 1rem; color: #cbd5e1;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    table.admin-table tr:last-child td { border-bottom: none; }
+    table.admin-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+    .status-badge {
+      display: inline-block; padding: 0.2rem 0.6rem;
+      border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+    }
+    .status-badge.Pending    { background: rgba(251,191,36,0.15); color: #fbbf24; }
+    .status-badge.Processing { background: rgba(56,189,248,0.15); color: #38bdf8; }
+    .status-badge.Shipped    { background: rgba(167,139,250,0.15); color: #a78bfa; }
+    .status-badge.Delivered  { background: rgba(52,211,153,0.15); color: #34d399; }
+    .status-badge.Cancelled  { background: rgba(248,113,113,0.15); color: #f87171; }
+
+    .btn-admin {
+      background: rgba(56,189,248,0.15); border: 1px solid #38bdf8;
+      color: #38bdf8; padding: 0.3rem 0.75rem; border-radius: 6px;
+      cursor: pointer; font-size: 0.8rem; transition: all 0.2s;
+    }
+    .btn-admin:hover { background: rgba(56,189,248,0.3); }
+    .btn-admin.danger { background: rgba(248,113,113,0.15); border-color: #f87171; color: #f87171; }
+    .btn-admin.danger:hover { background: rgba(248,113,113,0.3); }
+    .btn-admin.success { background: rgba(52,211,153,0.15); border-color: #34d399; color: #34d399; }
+    .btn-admin.success:hover { background: rgba(52,211,153,0.3); }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .select-status {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+      color: #cbd5e1; border-radius: 6px; padding: 0.3rem 0.5rem; font-size: 0.8rem;
+    }
+
+    #auth-guard { text-align: center; padding: 4rem 2rem; color: #94a3b8; }
+    #auth-guard h2 { color: #f87171; margin-bottom: 1rem; }
+
+    .low-stock-badge {
+      display: inline-block; background: rgba(248,113,113,0.15);
+      color: #f87171; padding: 0.15rem 0.5rem; border-radius: 20px;
+      font-size: 0.75rem; font-weight: 600;
+    }
+
+    /* Coupon Form */
+    .coupon-form {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
+    }
+    .coupon-form h3 { color: #f1f5f9; margin-bottom: 1rem; font-size: 1rem; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; }
+    .form-field label { display: block; color: #94a3b8; font-size: 0.8rem; margin-bottom: 0.3rem; }
+    .form-field input, .form-field select {
+      width: 100%; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 6px;
+      color: #f1f5f9; padding: 0.5rem 0.75rem; font-size: 0.875rem;
+    }
+    .form-field input:focus, .form-field select:focus {
+      outline: none; border-color: #38bdf8;
+    }
+    .form-actions { margin-top: 1rem; }
+  </style>
+</head>
+<body>
+
+  <header class="admin-header">
+    <span class="brand">⚡ AroraCart — Admin</span>
+    <nav class="admin-nav">
+      <button class="active" data-panel="analytics">📊 Analytics</button>
+      <button data-panel="orders">📦 Orders</button>
+      <button data-panel="products">🛍️ Products</button>
+      <button data-panel="coupons">🏷️ Coupons</button>
+      <button data-panel="users">👥 Users</button>
+    </nav>
+    <a href="/index.html" style="color:#38bdf8;text-decoration:none;font-size:0.875rem;">← Back to Store</a>
+  </header>
+
+  <div id="auth-guard" style="display:none;">
+    <h2>🔒 Access Denied</h2>
+    <p>This page is restricted to admin accounts only.</p>
+    <a href="/login.html" class="btn-admin" style="display:inline-block;margin-top:1rem;">Go to Login</a>
+  </div>
+
+  <div id="admin-content" style="display:none;">
+    <div class="admin-wrapper">
+
+      <!-- Analytics Panel -->
+      <section class="panel active" id="panel-analytics">
+        <h2 class="section-title">📊 Live Store Analytics</h2>
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card"><div class="stat-label">Total Orders</div><div class="stat-value" id="stat-orders">—</div></div>
+          <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value stat-accent" id="stat-revenue">—</div></div>
+          <div class="stat-card"><div class="stat-label">Registered Users</div><div class="stat-value" id="stat-users">—</div></div>
+          <div class="stat-card"><div class="stat-label">Total Products</div><div class="stat-value" id="stat-products">—</div></div>
+        </div>
+
+        <h3 class="section-title">🔴 Low Stock Products (≤ 5 units)</h3>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Product</th><th>Stock Remaining</th><th>Price</th></tr></thead>
+            <tbody id="low-stock-table"><tr><td colspan="3" style="color:#94a3b8;text-align:center;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+
+        <h3 class="section-title">📈 Order Status Breakdown</h3>
+        <div id="status-breakdown" style="display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;"></div>
+
+        <h3 class="section-title">🏆 Top Ordered Products</h3>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Product</th><th>Units Ordered</th><th>Revenue</th></tr></thead>
+            <tbody id="top-products-table"><tr><td colspan="3" style="color:#94a3b8;text-align:center;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+
+        <h3 class="section-title">🕐 Recent Orders</h3>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody id="recent-orders-table"><tr><td colspan="5" style="color:#94a3b8;text-align:center;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Orders Panel -->
+      <section class="panel" id="panel-orders">
+        <h2 class="section-title">📦 All Orders</h2>
+        <div style="margin-bottom:1rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+          <label style="color:#94a3b8;font-size:0.875rem;">Filter by status:</label>
+          <select class="select-status" id="order-status-filter">
+            <option value="">All</option>
+            <option>Pending</option><option>Processing</option>
+            <option>Shipped</option><option>Delivered</option><option>Cancelled</option>
+          </select>
+          <button class="btn-admin" id="btn-refresh-orders">🔄 Refresh</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody id="orders-table"><tr><td colspan="6" style="color:#94a3b8;text-align:center;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+        <div id="orders-pagination" style="display:flex;gap:0.5rem;margin-top:1rem;align-items:center;"></div>
+      </section>
+
+      <!-- Products Panel -->
+      <section class="panel" id="panel-products">
+        <h2 class="section-title">🛍️ Product Management</h2>
+        <p style="color:#94a3b8;font-size:0.875rem;margin-bottom:1rem;">Edit price, stock, or featured status. Click ✏️ to edit inline.</p>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Product</th><th>Category</th><th>Price (₹)</th><th>Stock</th><th>Featured</th><th>Actions</th></tr></thead>
+            <tbody id="products-table"><tr><td colspan="6" style="color:#94a3b8;text-align:center;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Coupons Panel -->
+      <section class="panel" id="panel-coupons">
+        <h2 class="section-title">🏷️ Coupon Management</h2>
+
+        <div class="coupon-form">
+          <h3>➕ Create New Coupon</h3>
+          <div class="form-grid">
+            <div class="form-field"><label>Code *</label><input id="c-code" placeholder="e.g. SUMMER20" /></div>
+            <div class="form-field"><label>Type *</label>
+              <select id="c-type"><option value="percentage">Percentage</option><option value="flat">Flat Amount</option></select>
+            </div>
+            <div class="form-field"><label>Value *</label><input id="c-value" type="number" placeholder="e.g. 10" /></div>
+            <div class="form-field"><label>Min Order (₹)</label><input id="c-min" type="number" placeholder="0" /></div>
+            <div class="form-field"><label>Max Discount (₹)</label><input id="c-max" type="number" placeholder="0 = no limit" /></div>
+            <div class="form-field"><label>Expiry Date</label><input id="c-expiry" type="date" /></div>
+            <div class="form-field"><label>Usage Limit</label><input id="c-limit" type="number" placeholder="Blank = unlimited" /></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-admin success" id="btn-create-coupon">✅ Create Coupon</button>
+          </div>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Min Order</th><th>Used/Limit</th><th>Expiry</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="coupons-table"><tr><td colspan="8" style="color:#94a3b8;text-align:center;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Users Panel -->
+      <section class="panel" id="panel-users">
+        <h2 class="section-title">👥 Registered Users</h2>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
+            <tbody id="users-table"><tr><td colspan="4" style="color:#94a3b8;text-align:center;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="/js/toast.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/admin.js"></script>
+  <script src="/js/demoMode.js"></script>
+</body>
+</html>

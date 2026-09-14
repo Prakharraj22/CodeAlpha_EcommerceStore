@@ -35,4 +35,7 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Index for getting user's order history sorted by time
+orderSchema.index({ user: 1, createdAt: -1 });
+
 module.exports = mongoose.model('Order', orderSchema);

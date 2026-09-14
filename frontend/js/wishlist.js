@@ -1,7 +1,17 @@
 // AroraCart Wishlist Manager
 const getWishlistItems = () => {
-  const list = localStorage.getItem('arora_wishlist');
-  return list ? JSON.parse(list) : [];
+  try {
+    const list = localStorage.getItem('arora_wishlist');
+    let items = list ? JSON.parse(list) : [];
+    // Automatically purge legacy invalid IDs
+    if (Array.isArray(items) && items.some(id => typeof id === 'string' && id.startsWith('66a1a1a1'))) {
+      items = items.filter(id => typeof id === 'string' && !id.startsWith('66a1a1a1'));
+      localStorage.setItem('arora_wishlist', JSON.stringify(items));
+    }
+    return Array.isArray(items) ? items : [];
+  } catch {
+    return [];
+  }
 };
 
 const toggleWishlistItem = async (productId) => {
@@ -18,8 +28,14 @@ const toggleWishlistItem = async (productId) => {
       wishlist = res.wishlist.map(item => typeof item === 'object' ? item._id : item);
       showToast(res.message, 'success');
     } catch (err) {
-      showToast(err.message, 'error');
-      return;
+      // Graceful fallback to local storage if backend is in fallback mode or token is offline
+      if (index > -1) {
+        wishlist.splice(index, 1);
+        showToast('Removed from wishlist', 'info');
+      } else {
+        wishlist.push(productId);
+        showToast('Added to wishlist!', 'success');
+      }
     }
   } else {
     // Local fallback for non-logged in users
@@ -41,6 +57,12 @@ const updateWishlistUI = () => {
   const badge = document.getElementById('wishlist-badge');
   if (badge) {
     badge.textContent = wishlist.length;
+    badge.style.display = wishlist.length > 0 ? 'inline-flex' : 'none';
+  }
+  const dockBadge = document.getElementById('dock-wishlist-badge');
+  if (dockBadge) {
+    dockBadge.textContent = wishlist.length;
+    dockBadge.style.display = wishlist.length > 0 ? 'block' : 'none';
   }
 
   document.querySelectorAll('.wishlist-btn').forEach((btn) => {

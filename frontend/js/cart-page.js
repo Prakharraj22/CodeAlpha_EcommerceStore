@@ -80,12 +80,18 @@ const renderCartPage = () => {
             </button>
           </div>
 
+          <div class="coupon-chips-grid">
+            <button class="coupon-chip-btn" onclick="quickApplyCoupon('ARORA10')" type="button">🏷️ ARORA10 (10% Off)</button>
+            <button class="coupon-chip-btn" onclick="quickApplyCoupon('WELCOME500')" type="button">🏷️ WELCOME500 (₹500 Off)</button>
+            <button class="coupon-chip-btn" onclick="quickApplyCoupon('TECH20')" type="button">🏷️ TECH20 (20% Off)</button>
+          </div>
+
           ${appliedCoupon
-            ? `<div class="coupon-success" role="status">
+            ? `<div class="coupon-success" role="status" style="margin-top:0.75rem;">
                 ✅ ${appliedCoupon.message}
                 <button class="coupon-remove-btn" onclick="removeCoupon()" aria-label="Remove coupon">✕</button>
               </div>`
-            : `<p class="coupon-hint">Try: <strong>ARORA10</strong> (10% off ≥₹2,000) · <strong>WELCOME500</strong> (₹500 off ≥₹3,000) · <strong>TECH20</strong> (20% off ≥₹5,000)</p>`}
+            : `<p class="coupon-hint" style="margin-top:0.5rem;">Click any code above to auto-apply instant discount!</p>`}
         </div>
 
         <!-- Price Breakdown -->
@@ -259,6 +265,13 @@ const proceedToCheckout = () => {
   window.location.href = '/checkout.html';
 };
 
+/** Quick apply coupon from chip click */
+const quickApplyCoupon = (code) => {
+  const input = document.getElementById('coupon-input');
+  if (input) input.value = code;
+  handleApplyCoupon();
+};
+
 // Exports
 window.handleCartQtyChange = handleCartQtyChange;
 window.handleRemoveItem = handleRemoveItem;
@@ -267,3 +280,4 @@ window.doClearCart = doClearCart;
 window.handleApplyCoupon = handleApplyCoupon;
 window.removeCoupon = removeCoupon;
 window.proceedToCheckout = proceedToCheckout;
+window.quickApplyCoupon = quickApplyCoupon;

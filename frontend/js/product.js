@@ -28,8 +28,15 @@ const loadProductDetails = async () => {
     const data = await fetchAPI(`/products/${productId}`);
     currentProduct = data.product;
     renderProductDetail(data.product, data.reviews || []);
+    initStickyBuyBar(data.product);
     loadRelatedProducts(data.product.category, productId);
     updatePageMeta(data.product);
+
+    // Track this product view and show recently viewed row
+    if (typeof trackProductView === 'function') {
+      trackProductView(productId);
+      renderRecentlyViewed('recently-viewed-container', productId);
+    }
   } catch (err) {
     renderDetailError(err.message);
   }
@@ -105,6 +112,10 @@ const renderProductDetail = (product, reviews) => {
           ${product.isFeatured ? '<span class="featured-badge">⭐ Featured</span>' : ''}
         </div>
 
+        <div style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.78rem;font-weight:600;color:#f59e0b;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);padding:0.2rem 0.6rem;border-radius:var(--radius-full);margin-bottom:0.4rem;">
+          🔥 <strong>High Demand:</strong> 8 tech enthusiasts viewing this right now
+        </div>
+
         <h1 class="product-detail-title">${product.title}</h1>
 
         <!-- Rating Summary -->
@@ -124,12 +135,26 @@ const renderProductDetail = (product, reviews) => {
             : ''}
         </div>
 
-        ${product.originalPrice > product.price
-          ? `<p class="tax-note">Inclusive of all taxes. EMI available from ₹${Math.round(product.price / 12).toLocaleString('en-IN')}/month</p>`
-          : ''}
+        <div style="margin: 0.5rem 0 0.8rem;">
+          <button type="button" class="btn-emi-link" onclick="openEmiModal(${product.price})">
+            💳 EMI from ₹${Math.round(product.price / 12).toLocaleString('en-IN')}/mo · View Bank Offers &amp; Cashbacks →
+          </button>
+        </div>
 
         <!-- Description -->
         <p class="product-detail-desc">${product.description}</p>
+
+        <!-- Delivery Pincode Estimator -->
+        <div class="pincode-estimator-card">
+          <div class="pincode-estimator-title">
+            <span>🚚</span> Check Express Delivery Availability
+          </div>
+          <div class="pincode-input-row">
+            <input type="text" id="pincode-input" class="form-control pincode-input" placeholder="e.g. 110001" maxlength="6" />
+            <button class="btn btn-outline btn-sm" onclick="checkPincodeDelivery()">Check</button>
+          </div>
+          <div id="pincode-result" class="pincode-result"></div>
+        </div>
 
         <!-- Specifications -->
         ${product.specifications && product.specifications.length > 0 ? `
@@ -181,14 +206,28 @@ const renderProductDetail = (product, reviews) => {
             >
               ♥ Wishlist
             </button>
+            <button
+              type="button"
+              class="btn btn-outline"
+              onclick="shareProduct('${product.title.replace(/'/g, "\\'")}')"
+              aria-label="Share product"
+            >
+              🔗 Share
+            </button>
           </div>
         </div>
 
-        <!-- Shipping Info -->
+        <!-- Shipping & Guarantee Info -->
         <div class="shipping-info-card">
-          <div class="shipping-row"><span class="shipping-icon">🚚</span> <strong>Free Shipping</strong> on orders over ₹1,999</div>
-          <div class="shipping-row"><span class="shipping-icon">🔄</span> <strong>7-Day Returns</strong> — No questions asked</div>
-          <div class="shipping-row"><span class="shipping-icon">🛡️</span> <strong>Genuine Products</strong> — 100% authentic guarantee</div>
+          <div class="shipping-row" onclick="openInfoModal('dispatch')" style="cursor:pointer;" title="Click for Shipping details">
+            <span class="shipping-icon">🚚</span> <strong>Free Shipping</strong> on orders over ₹1,999 <span style="color:#38bdf8;font-size:0.75rem;margin-left:auto;">Details →</span>
+          </div>
+          <div class="shipping-row" onclick="openInfoModal('replacement')" style="cursor:pointer;" title="Click for Returns details">
+            <span class="shipping-icon">🔄</span> <strong>7-Day Returns</strong> — No questions asked <span style="color:#38bdf8;font-size:0.75rem;margin-left:auto;">Details →</span>
+          </div>
+          <div class="shipping-row" onclick="openInfoModal('warranty')" style="cursor:pointer;" title="Click for Warranty details">
+            <span class="shipping-icon">🛡️</span> <strong>1-Year Brand Warranty</strong> — 100% authentic <span style="color:#38bdf8;font-size:0.75rem;margin-left:auto;">Details →</span>
+          </div>
         </div>
       </div>
     </div>
@@ -376,11 +415,35 @@ const changeDetailQty = (delta) => {
 /** Add current product to cart */
 const addDetailToCart = () => {
   if (!currentProduct || currentProduct.stock <= 0) return;
+  const user = typeof getAuthUser === 'function' ? getAuthUser() : JSON.parse(localStorage.getItem('arora_user') || 'null');
+  if (!user) {
+    if (typeof showAuthPromptModal === 'function') {
+      showAuthPromptModal(currentProduct);
+    } else {
+      showToast('🔒 Please sign in before adding items to your cart!', 'warning');
+      setTimeout(() => {
+        window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+      }, 900);
+    }
+    return;
+  }
   addToCart(currentProduct, detailQty);
 };
 
 /** Add a related product to cart */
 const handleRelatedAddToCart = async (productId) => {
+  const user = typeof getAuthUser === 'function' ? getAuthUser() : JSON.parse(localStorage.getItem('arora_user') || 'null');
+  if (!user) {
+    if (typeof showAuthPromptModal === 'function') {
+      showAuthPromptModal({ _id: productId, title: 'this item' });
+    } else {
+      showToast('🔒 Please sign in before adding items to your cart!', 'warning');
+      setTimeout(() => {
+        window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+      }, 900);
+    }
+    return;
+  }
   try {
     const res = await fetchAPI(`/products/${productId}`);
     if (res.product) addToCart(res.product, 1);
@@ -451,8 +514,63 @@ const wireReviewForm = () => {
   }
 };
 
+// ─── Pincode Delivery Estimator ───────────────────────────────
+const checkPincodeDelivery = () => {
+  const input = document.getElementById('pincode-input');
+  const result = document.getElementById('pincode-result');
+  if (!input || !result) return;
+
+  const pin = input.value.trim();
+  if (!pin || pin.length < 6 || isNaN(pin)) {
+    result.className = 'pincode-result';
+    result.style.display = 'block';
+    result.style.color = '#f87171';
+    result.textContent = '❌ Please enter a valid 6-digit Indian pincode.';
+    return;
+  }
+
+  // Simulated express delivery estimate
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const formattedDate = tomorrow.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+
+  result.className = 'pincode-result success';
+  result.innerHTML = `⚡ <strong>Express Delivery Available:</strong> Order within 4 hrs to get it by <strong>${formattedDate}, 5:00 PM</strong>. COD available.`;
+};
+
+// ─── Sticky Buy Bar Initialization ────────────────────────────
+const initStickyBuyBar = (product) => {
+  const bar = document.getElementById('sticky-buy-bar');
+  const thumb = document.getElementById('sticky-thumb');
+  const title = document.getElementById('sticky-title');
+  const price = document.getElementById('sticky-price');
+  const btn = document.getElementById('sticky-cart-btn');
+  if (!bar || !thumb || !title || !price) return;
+
+  thumb.src = product.image;
+  thumb.alt = product.title;
+  title.textContent = product.title;
+  price.textContent = formatINR(product.price);
+  if (btn && product.stock <= 0) {
+    btn.disabled = true;
+    btn.textContent = '❌ Out of Stock';
+  }
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 480) {
+      bar.classList.add('visible');
+    } else {
+      bar.classList.remove('visible');
+    }
+  });
+};
+
+// Hook sticky bar init into loadProductDetails
+const originalRenderProductDetail = renderProductDetail;
 // Exports
 window.changeDetailQty = changeDetailQty;
 window.addDetailToCart = addDetailToCart;
 window.submitReview = submitReview;
 window.handleRelatedAddToCart = handleRelatedAddToCart;
+window.checkPincodeDelivery = checkPincodeDelivery;
+window.initStickyBuyBar = initStickyBuyBar;

@@ -28,6 +28,22 @@ const saveCartItems = (items) => {
  * @param {number} [quantity=1] - Quantity to add.
  */
 const addToCart = (product, quantity = 1) => {
+  // Enforce authentication before adding to cart
+  const user = typeof getAuthUser === 'function' ? getAuthUser() : JSON.parse(localStorage.getItem('arora_user') || 'null');
+  if (!user) {
+    if (typeof showAuthPromptModal === 'function') {
+      showAuthPromptModal(product);
+    } else {
+      if (typeof showToast === 'function') {
+        showToast('🔒 Please log in before adding items to your cart!', 'warning');
+      }
+      setTimeout(() => {
+        window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+      }, 900);
+    }
+    return false;
+  }
+
   const items = getCartItems();
   const existingIndex = items.findIndex(item => item.product === product._id);
 
