@@ -170,7 +170,7 @@ const buildProductCard = (product, wishlist) => {
           ${product.stock <= 0 ? 'disabled aria-disabled="true"' : ''}
           aria-label="Add ${product.title} to cart"
         >
-          ${product.stock <= 0 ? '❌ Out of Stock' : '🛒 Add to Cart'}
+          ${product.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
         </button>
 
         <div class="card-quick-actions">
@@ -638,20 +638,20 @@ const openQuickView = async (productId) => {
           </p>
 
           ${p.specifications && p.specifications.length > 0 ? `
-            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:0.75rem 1rem;margin-bottom:1.5rem;">
-              <div style="font-size:0.8rem;font-weight:700;color:#38bdf8;text-transform:uppercase;margin-bottom:0.4rem;">Key Highlights</div>
-              <ul style="list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;font-size:0.8rem;color:#cbd5e1;">
-                ${p.specifications.slice(0, 4).map(s => `<li><strong>${s.key}:</strong> ${s.value}</li>`).join('')}
+            <div style="background:var(--bg-surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:0.75rem 1rem;margin-bottom:1.5rem;">
+              <div style="font-size:0.75rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.4rem;">Key Highlights</div>
+              <ul style="list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;font-size:0.8rem;color:var(--text-secondary);">
+                ${p.specifications.slice(0, 4).map(s => `<li><strong style="color:var(--text-main);">${s.key}:</strong> ${s.value}</li>`).join('')}
               </ul>
             </div>
           ` : ''}
 
           <div style="display:flex;gap:0.75rem;">
             <button class="btn btn-primary" style="flex:1;" onclick="handleAddToCart('${p._id}'); closeGlassModal();" ${p.stock <= 0 ? 'disabled' : ''}>
-              🛒 ${p.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
+              ${p.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
             </button>
             <a href="/product.html?id=${p._id}" class="btn btn-secondary">
-              Full Page →
+              Full Specs →
             </a>
           </div>
         </div>
@@ -759,8 +759,8 @@ const openCompareModal = async () => {
                 <div style="width:70px;height:70px;margin:0 auto 0.5rem;border-radius:var(--radius-xs);overflow:hidden;">
                   <img src="${p.image}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;" />
                 </div>
-                <div style="font-size:0.85rem;font-weight:700;color:#f1f5f9;margin-bottom:0.25rem;">${p.title}</div>
-                <div style="font-size:0.95rem;color:#38bdf8;font-weight:700;">${formatINR(p.price)}</div>
+                <div style="font-size:0.85rem;font-weight:700;color:var(--text-main);margin-bottom:0.25rem;">${p.title}</div>
+                <div style="font-size:0.95rem;color:var(--text-main);font-weight:700;">${formatINR(p.price)}</div>
               </th>
             `).join('')}
           </tr>

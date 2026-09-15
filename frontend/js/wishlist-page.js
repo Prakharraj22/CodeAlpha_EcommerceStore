@@ -67,15 +67,19 @@ async function loadWishlistPage() {
 function renderEmptyWishlist(container) {
   container.innerHTML = `
     <div class="empty-state" role="status">
-      <div class="empty-state-icon">💖</div>
+      <div class="empty-state-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+      </div>
       <h1 class="empty-state-title">Your Wishlist is Empty</h1>
       <p class="empty-state-desc">
-        Explore our curated collection of next-gen electronics, save your favorites, and track price drops!
+        Explore our curated collection of next-gen electronics, save your favorites, and track price drops.
       </p>
       <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;">
         <a href="/index.html" class="btn btn-primary">Discover Gadgets</a>
         <button class="btn btn-secondary" onclick="window.demoPopulateWishlist ? window.demoPopulateWishlist() : null">
-          🚀 Seed Demo Wishlist
+          Seed Demo Wishlist
         </button>
       </div>
     </div>
@@ -90,15 +94,15 @@ function renderWishlistProducts(container, products) {
       <div>
         <h1 class="page-heading" style="margin-bottom:0.25rem;">My Wishlist</h1>
         <p style="color:var(--text-muted);font-size:0.9rem;">
-          ${products.length} saved item${products.length !== 1 ? 's' : ''} · Total value: <strong style="color:var(--accent-secondary);">${formatINR(totalValue)}</strong>
+          ${products.length} saved item${products.length !== 1 ? 's' : ''} · Total value: <strong style="color:var(--text-main);">${formatINR(totalValue)}</strong>
         </p>
       </div>
       <div class="wishlist-header-actions">
         <button class="btn btn-primary" onclick="moveAllWishlistToCart()" id="btn-move-all">
-          ⚡ Move All to Cart
+          Move All to Cart
         </button>
         <button class="btn btn-outline btn-sm" onclick="clearAllWishlist()">
-          🗑️ Clear All
+          Clear All
         </button>
       </div>
     </div>
@@ -155,7 +159,7 @@ function buildWishlistCard(product) {
             onclick="moveItemToCart('${product._id}')"
             ${!inStock ? 'disabled' : ''}
           >
-            🛒 ${inStock ? 'Move to Cart' : 'Out of Stock'}
+            ${inStock ? 'Move to Cart' : 'Out of Stock'}
           </button>
         </div>
       </div>

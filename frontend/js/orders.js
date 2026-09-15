@@ -21,12 +21,12 @@ const loadOrderHistory = async () => {
           Please sign in to your AroraCart account to review your orders, track live courier deliveries, and download official GST tax invoices.
         </p>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-          <a href="/login.html?redirect=orders" class="btn btn-primary" style="padding:0.75rem 1.75rem;">🔑 Sign In to Account</a>
-          <a href="/register.html?redirect=orders" class="btn btn-secondary" style="padding:0.75rem 1.5rem;">✨ Create Account</a>
+          <a href="/login.html?redirect=orders" class="btn btn-primary" style="padding:0.75rem 1.75rem;">Sign In to Account</a>
+          <a href="/register.html?redirect=orders" class="btn btn-secondary" style="padding:0.75rem 1.5rem;">Create Account</a>
         </div>
-        <div style="margin-top:1.75rem;padding-top:1.25rem;border-top:1px solid rgba(255,255,255,0.08);">
-          <button class="btn btn-sm" style="background:none;border:none;color:#38bdf8;cursor:pointer;text-decoration:underline;font-size:0.85rem;" onclick="window.demoSwitchRole && window.demoSwitchRole('customer')">
-            ⚡ 1-Click Demo Login as Customer
+        <div style="margin-top:1.75rem;padding-top:1.25rem;border-top:1px solid var(--border-subtle);">
+          <button class="btn btn-sm" style="background:none;border:none;color:var(--primary);cursor:pointer;text-decoration:underline;font-size:0.85rem;" onclick="window.demoSwitchRole && window.demoSwitchRole('customer')">
+            1-Click Demo Login as Customer
           </button>
         </div>
       </div>
@@ -162,9 +162,9 @@ const renderOrderHistory = (container, orders) => {
           You haven't placed any orders yet. Once you complete a purchase, your orders, delivery progress, and downloadable tax invoices will appear right here.
         </p>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-          <a href="/index.html" class="btn btn-primary" style="padding:0.75rem 1.75rem;">🛍️ Discover Electronics</a>
+          <a href="/index.html" class="btn btn-primary" style="padding:0.75rem 1.75rem;">Discover Electronics</a>
           <button class="btn btn-secondary" onclick="window.seedDemoOrderForEvaluation()" style="padding:0.75rem 1.5rem;">
-            ⚡ Place Sample Demo Order
+            Place Sample Demo Order
           </button>
         </div>
       </div>
@@ -216,10 +216,10 @@ const renderOrderCard = (order) => {
           <div class="order-payment-method">${order.paymentMethod}</div>
           ${canCancel ? `
             <button id="cancel-btn-${order._id}"
-                    class="btn btn-sm"
-                    style="background:rgba(248,113,113,0.1);border:1px solid #f87171;color:#f87171;padding:0.3rem 0.75rem;border-radius:6px;cursor:pointer;font-size:0.8rem;margin-top:0.5rem;"
+                    class="btn btn-danger btn-sm"
+                    style="margin-top:0.5rem;"
                     onclick="cancelOrder('${order._id}')">
-              🚫 Cancel Order
+              Cancel Order
             </button>` : ''}
         </div>
       </header>
@@ -230,7 +230,7 @@ const renderOrderCard = (order) => {
           ${statusSteps.map((step, idx) => {
             const isCompleted = idx <= currentStepIndex;
             const isCurrent = idx === currentStepIndex;
-            const stepIcons = ['⏳', '⚙️', '🚚', '✅'];
+            const stepIcons = ['✓', '⚙', '✈', '★'];
             return `
               <div class="timeline-step ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}"
                    role="listitem"
@@ -245,19 +245,19 @@ const renderOrderCard = (order) => {
           }).join('')}
         </div>
       ` : `
-        <div class="cancelled-notice" role="status">🚫 This order was cancelled and stock has been restored.</div>
+        <div class="cancelled-notice" role="status">This order was cancelled and stock has been restored.</div>
       `}
 
       <!-- Order Actions Strip -->
-      <div style="display:flex;flex-wrap:wrap;gap:0.6rem;padding:0.75rem 1.25rem;background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
+      <div style="display:flex;flex-wrap:wrap;gap:0.6rem;padding:0.75rem 1.25rem;background:var(--bg-surface-2);border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);">
         <button type="button" class="btn btn-outline btn-sm" onclick="downloadInvoice('${order._id}')" title="Download official GST Tax Invoice">
-          📄 Download Tax Invoice
+          Download Tax Invoice
         </button>
         <button type="button" class="btn btn-outline btn-sm" onclick="openTrackingModal('${order._id}')" title="Track Live BlueDart / Delhivery shipment">
-          🚚 Live Courier Tracking
+          Live Courier Tracking
         </button>
         <button type="button" class="btn btn-outline btn-sm" onclick="openHelpCenter('faq')" title="Need help with this order?">
-          💬 Order Help
+          Order Help
         </button>
       </div>
 

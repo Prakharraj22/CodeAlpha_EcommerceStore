@@ -86,7 +86,7 @@ const updateAuthUI = () => {
     } else {
       authNav.innerHTML = `
         <a href="/login.html" class="nav-link">Login</a>
-        <a href="/register.html" class="btn btn-primary nav-cta-btn">Register Free</a>
+        <a href="/register.html" class="btn btn-primary nav-cta-btn">Register</a>
       `;
     }
   }

@@ -163,9 +163,9 @@
               </div>
             </div>
 
-            <div style="margin-top:1.5rem;padding:1rem;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.25);border-radius:var(--radius-md);">
-              <strong style="color:#38bdf8;">📍 Need live status?</strong>
-              <span style="color:#cbd5e1;font-size:0.85rem;margin-left:0.5rem;">Check your order timeline anytime under <a href="/orders.html" style="color:#38bdf8;text-decoration:underline;">My Orders</a>.</span>
+            <div style="margin-top:1.5rem;padding:1rem;background:var(--bg-surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-md);">
+              <strong style="color:var(--text-main);">📍 Need live status?</strong>
+              <span style="color:var(--text-secondary);font-size:0.85rem;margin-left:0.5rem;">Check your order timeline anytime under <a href="/orders.html" style="color:var(--primary);text-decoration:underline;">My Orders</a>.</span>
             </div>
           </div>
         `
@@ -349,8 +349,8 @@
     const html = `
       <div style="margin-bottom:1.25rem;">
         <span class="recruiter-brand-badge">FINANCING &amp; OFFERS</span>
-        <h2 style="color:#f1f5f9;font-size:1.4rem;margin-top:0.3rem;">💳 Easy Monthly EMI Plans</h2>
-        <p style="color:#94a3b8;font-size:0.85rem;">Calculated for gadget price: <strong style="color:#38bdf8;">${formatINR(p)}</strong></p>
+        <h2 style="color:var(--text-main);font-size:1.35rem;margin-top:0.3rem;">Easy Monthly EMI Plans</h2>
+        <p style="color:var(--text-secondary);font-size:0.85rem;">Calculated for gadget price: <strong style="color:var(--text-main);">${formatINR(p)}</strong></p>
       </div>
 
       <div style="overflow-x:auto;">
@@ -366,9 +366,9 @@
           <tbody>
             ${emiOptions.map(opt => `
               <tr>
-                <td style="font-weight:700;color:#f1f5f9;">${opt.months} Months</td>
+                <td style="font-weight:700;color:var(--text-main);">${opt.months} Months</td>
                 <td>${opt.bank}</td>
-                <td style="color:#38bdf8;font-weight:700;">${formatINR(opt.monthly)}/mo</td>
+                <td style="color:var(--text-main);font-weight:700;">${formatINR(opt.monthly)}/mo</td>
                 <td><span class="stock-badge stock-in">${opt.cashback}</span></td>
               </tr>
             `).join('')}
@@ -437,7 +437,7 @@
         <div class="tracking-step active">
           <div class="tracking-dot">🚚</div>
           <div class="tracking-text">
-            <strong style="color:#38bdf8;">Out for Delivery to Doorstep</strong>
+            <strong style="color:var(--text-main);">Out for Delivery to Doorstep</strong>
             <small>Today · Delivery Executive: <strong>Ramesh Kumar (+91 9876543210)</strong></small>
           </div>
         </div>
@@ -637,9 +637,9 @@
       </div>
 
       <div id="help-content-contact" style="${tab === 'contact' ? '' : 'display:none;'}">
-        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-md);padding:1.25rem;">
-          <h4 style="color:#38bdf8;margin-bottom:0.5rem;">📞 Priority Customer Support</h4>
-          <p style="color:#cbd5e1;font-size:0.85rem;line-height:1.6;margin-bottom:1rem;">
+        <div style="background:var(--bg-surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:1.25rem;">
+          <h4 style="color:var(--text-main);margin-bottom:0.5rem;">Priority Customer Support</h4>
+          <p style="color:var(--text-secondary);font-size:0.85rem;line-height:1.6;margin-bottom:1rem;">
             Our customer champions are available 7 days a week, 9:00 AM – 9:00 PM IST.
           </p>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem;font-size:0.85rem;">
@@ -714,27 +714,27 @@
         </p>
 
         ${prodImg ? `
-          <div style="display:inline-flex;align-items:center;gap:0.9rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:0.65rem 1rem;border-radius:var(--radius-md);margin-bottom:1.5rem;text-align:left;max-width:90%;">
+          <div style="display:inline-flex;align-items:center;gap:0.9rem;background:var(--bg-surface-2);border:1px solid var(--border-subtle);padding:0.65rem 1rem;border-radius:var(--radius-md);margin-bottom:1.5rem;text-align:left;max-width:90%;">
             ${prodImg}
             <div>
-              <div style="color:#f1f5f9;font-size:0.88rem;font-weight:600;line-height:1.3;">${prodTitle}</div>
-              ${product && product.price ? `<div style="color:#38bdf8;font-size:0.9rem;font-weight:700;margin-top:0.25rem;">${typeof formatINR === 'function' ? formatINR(product.price) : '₹' + product.price}</div>` : ''}
+              <div style="color:var(--text-main);font-size:0.88rem;font-weight:600;line-height:1.3;">${prodTitle}</div>
+              ${product && product.price ? `<div style="color:var(--text-main);font-size:0.95rem;font-weight:700;margin-top:0.25rem;">${typeof formatINR === 'function' ? formatINR(product.price) : '₹' + product.price}</div>` : ''}
             </div>
           </div>
         ` : ''}
 
         <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
           <a href="/login.html?redirect=${redirectUrl}" class="btn btn-primary" style="padding:0.75rem 1.75rem;">
-            🔑 Sign In to Account
+            Sign In to Account
           </a>
           <a href="/register.html?redirect=${redirectUrl}" class="btn btn-secondary" style="padding:0.75rem 1.5rem;">
-            ✨ Create Account
+            Create Account
           </a>
         </div>
 
-        <div style="margin-top:1.5rem;border-top:1px solid rgba(255,255,255,0.08);padding-top:1rem;display:flex;justify-content:center;align-items:center;gap:0.5rem;">
-          <button class="btn btn-sm" style="background:none;border:none;color:#38bdf8;cursor:pointer;text-decoration:underline;font-size:0.82rem;" onclick="window.demoSwitchRole && window.demoSwitchRole('customer')">
-            ⚡ 1-Click Demo Login as Customer
+        <div style="margin-top:1.5rem;border-top:1px solid var(--border-subtle);padding-top:1rem;display:flex;justify-content:center;align-items:center;gap:0.5rem;">
+          <button class="btn btn-sm" style="background:none;border:none;color:var(--primary);cursor:pointer;text-decoration:underline;font-size:0.82rem;" onclick="window.demoSwitchRole && window.demoSwitchRole('customer')">
+            1-Click Demo Login as Customer
           </button>
         </div>
       </div>

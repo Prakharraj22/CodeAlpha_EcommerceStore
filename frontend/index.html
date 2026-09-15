@@ -141,15 +141,15 @@
       <div class="controls-right">
         <div class="filter-controls">
           <button class="btn btn-filter" id="toggle-filters-btn" aria-expanded="false">
-            ⚙️ Filters
+            Filters
           </button>
           <div class="sort-wrapper">
             <label for="sort-select" class="sr-only">Sort products by</label>
             <select id="sort-select" class="sort-select" aria-label="Sort products">
-              <option value="newest">🕐 Newest First</option>
-              <option value="price-asc">💸 Price: Low to High</option>
-              <option value="price-desc">💎 Price: High to Low</option>
-              <option value="rating-desc">⭐ Highest Rated</option>
+              <option value="newest">Newest First</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="rating-desc">Highest Rated</option>
             </select>
           </div>
         </div>
@@ -167,7 +167,7 @@
           <button class="btn btn-outline btn-sm" id="apply-price-btn" type="button">Apply</button>
         </div>
         <small class="price-range-hint" style="color:var(--text-muted);font-size:0.75rem;margin-top:0.35rem;display:block;">
-          ⚡ Min is ₹0 · Max starts at ₹5,000 with increments of ₹250
+          Min ₹0 · Max starts at ₹5,000 with increments of ₹250
         </small>
         <div class="price-presets" style="display:flex;gap:0.4rem;margin-top:0.5rem;flex-wrap:wrap;">
           <button type="button" class="btn btn-sm price-chip" onclick="setPricePreset(0, 5000)">Up to ₹5,000</button>
@@ -181,13 +181,13 @@
         <label class="filter-label">Minimum Rating</label>
         <div class="rating-filter-options">
           <label class="rating-option"><input type="radio" name="min-rating" value="" checked /> All Ratings</label>
-          <label class="rating-option"><input type="radio" name="min-rating" value="4.5" /> ⭐ 4.5+</label>
-          <label class="rating-option"><input type="radio" name="min-rating" value="4" /> ⭐ 4.0+</label>
-          <label class="rating-option"><input type="radio" name="min-rating" value="3.5" /> ⭐ 3.5+</label>
+          <label class="rating-option"><input type="radio" name="min-rating" value="4.5" /> ★ 4.5+</label>
+          <label class="rating-option"><input type="radio" name="min-rating" value="4" /> ★ 4.0+</label>
+          <label class="rating-option"><input type="radio" name="min-rating" value="3.5" /> ★ 3.5+</label>
         </div>
       </div>
 
-      <button class="btn btn-outline btn-sm" id="reset-filters-btn">🔄 Reset All Filters</button>
+      <button class="btn btn-secondary btn-sm" id="reset-filters-btn">Reset All Filters</button>
     </section>
 
     <!-- Result count & Active filter chips -->

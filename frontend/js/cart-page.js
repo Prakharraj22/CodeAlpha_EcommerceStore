@@ -53,7 +53,7 @@ const renderCartPage = () => {
         ${items.map(item => buildCartItem(item)).join('')}
 
         <div class="cart-meta-row">
-          <button class="btn btn-outline btn-sm" onclick="clearCartConfirm()">🗑️ Clear Cart</button>
+          <button class="btn btn-outline btn-sm" onclick="clearCartConfirm()">Clear Cart</button>
           <a href="/index.html" class="btn btn-secondary btn-sm">← Continue Shopping</a>
         </div>
       </div>
@@ -63,7 +63,7 @@ const renderCartPage = () => {
 
         <!-- Coupon Code Box -->
         <div class="coupon-card">
-          <h3 class="coupon-heading">🏷️ Apply Promo Code</h3>
+          <h3 class="coupon-heading">Apply Promo Code</h3>
           <div class="coupon-row">
             <input
               type="text"
@@ -81,17 +81,17 @@ const renderCartPage = () => {
           </div>
 
           <div class="coupon-chips-grid">
-            <button class="coupon-chip-btn" onclick="quickApplyCoupon('ARORA10')" type="button">🏷️ ARORA10 (10% Off)</button>
-            <button class="coupon-chip-btn" onclick="quickApplyCoupon('WELCOME500')" type="button">🏷️ WELCOME500 (₹500 Off)</button>
-            <button class="coupon-chip-btn" onclick="quickApplyCoupon('TECH20')" type="button">🏷️ TECH20 (20% Off)</button>
+            <button class="coupon-chip-btn" onclick="quickApplyCoupon('ARORA10')" type="button">ARORA10 · 10% Off</button>
+            <button class="coupon-chip-btn" onclick="quickApplyCoupon('WELCOME500')" type="button">WELCOME500 · ₹500 Off</button>
+            <button class="coupon-chip-btn" onclick="quickApplyCoupon('TECH20')" type="button">TECH20 · 20% Off</button>
           </div>
 
           ${appliedCoupon
             ? `<div class="coupon-success" role="status" style="margin-top:0.75rem;">
-                ✅ ${appliedCoupon.message}
+                ${appliedCoupon.message}
                 <button class="coupon-remove-btn" onclick="removeCoupon()" aria-label="Remove coupon">✕</button>
               </div>`
-            : `<p class="coupon-hint" style="margin-top:0.5rem;">Click any code above to auto-apply instant discount!</p>`}
+            : `<p class="coupon-hint" style="margin-top:0.5rem;">Click any code above to auto-apply instant discount.</p>`}
         </div>
 
         <!-- Price Breakdown -->
@@ -137,7 +137,13 @@ const renderCartPage = () => {
             Proceed to Checkout →
           </button>
 
-          <div class="secure-note">🔒 Secure checkout · All prices in INR (₹)</div>
+          <div class="secure-note">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px;">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            Secure checkout · All prices in INR (₹)
+          </div>
         </div>
       </aside>
     </div>
@@ -171,7 +177,7 @@ const buildCartItem = (item) => `
       <div class="cart-item-line-total">${formatINR(item.price * item.quantity)}</div>
 
       <button class="remove-item-btn" onclick="handleRemoveItem('${item.product}')"
-              aria-label="Remove ${item.title} from cart">🗑️</button>
+              aria-label="Remove ${item.title} from cart" title="Remove item">✕</button>
     </div>
   </div>
 `;

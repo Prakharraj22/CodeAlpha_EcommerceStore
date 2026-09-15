@@ -47,10 +47,10 @@ const renderCheckoutPage = () => {
       <!-- ── Shipping Form ── -->
       <div class="checkout-form-col">
         <div class="form-card">
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem;">
-            <h2 class="form-card-heading" style="margin-bottom:0;">🚚 Shipping Information</h2>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.25rem;">
+            <h2 class="form-card-heading" style="margin-bottom:0;">Shipping Information</h2>
             <button type="button" class="btn btn-secondary btn-sm" onclick="autofillDemoAddress()" title="Auto-fill sample delivery address">
-              ⚡ Fill Demo Address
+              Fill Demo Address
             </button>
           </div>
 
@@ -98,23 +98,23 @@ const renderCheckoutPage = () => {
               <div class="form-group">
                 <label class="form-label" for="payment-method">Payment Method</label>
                 <select id="payment-method" class="form-control" onchange="updatePaymentMethodUI(this.value)">
-                  <option value="Cash on Delivery">💵 Cash on Delivery (COD)</option>
-                  <option value="UPI Payment">📱 Instant UPI (GPay / PhonePe / Paytm)</option>
-                  <option value="Debit/Credit Card">💳 Credit / Debit Card (Visa, RuPay, MC)</option>
+                  <option value="Cash on Delivery">Cash on Delivery (COD)</option>
+                  <option value="UPI Payment">Instant UPI (GPay / PhonePe / Paytm)</option>
+                  <option value="Debit/Credit Card">Credit / Debit Card (Visa, RuPay, MC)</option>
                 </select>
               </div>
             </div>
 
             <!-- Dynamic Interactive Payment Method Details -->
-            <div id="payment-details-box" style="margin: 0.5rem 0 1rem; padding: 0.85rem 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); font-size: 0.85rem;">
-              <div id="payment-detail-text">💵 <strong>Cash on Delivery:</strong> Pay via cash or UPI to the delivery executive when your package arrives at your doorstep. Zero convenience fee.</div>
+            <div id="payment-details-box" style="margin: 0.5rem 0 1rem; padding: 0.85rem 1rem; background: var(--bg-surface-2); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); font-size: 0.825rem; color: var(--text-secondary);">
+              <div id="payment-detail-text"><strong style="color:var(--text-main);">Cash on Delivery:</strong> Pay via cash or UPI to the delivery executive when your package arrives at your doorstep. Zero convenience fee.</div>
             </div>
 
             <!-- Validation error display -->
             <div id="checkout-error" class="form-error" role="alert" hidden></div>
 
             <button type="submit" class="btn btn-primary checkout-btn" id="place-order-btn">
-              🛍️ Place Order — ${formatINR(totalAmount)}
+              Place Order — ${formatINR(totalAmount)}
             </button>
           </form>
         </div>
@@ -162,7 +162,13 @@ const renderCheckoutPage = () => {
             <strong class="total-amount">${formatINR(totalAmount)}</strong>
           </div>
 
-          <div class="secure-note">🔒 Safe & secure payment · All amounts in ₹ INR</div>
+          <div class="secure-note">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px;">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            Safe &amp; secure payment · All amounts in ₹ INR
+          </div>
         </div>
       </aside>
     </div>
@@ -205,64 +211,63 @@ const handlePlaceOrder = async (e) => {
   const items = getCartItems();
   const savedCoupon = sessionStorage.getItem('arora_coupon');
   const appliedCoupon = savedCoupon ? JSON.parse(savedCoupon) : null;
+  const itemsPrice = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const shippingPrice = itemsPrice >= 1999 ? 0 : 99;
+  const discountAmount = appliedCoupon ? appliedCoupon.discountAmount : 0;
+  const totalAmount = Math.max(0, itemsPrice + shippingPrice - discountAmount);
 
   if (placeBtn) {
     placeBtn.disabled = true;
-    placeBtn.textContent = '⏳ Placing your order…';
+    placeBtn.textContent = 'Placing your order…';
   }
 
-  let newOrder;
   try {
-    newOrder = await fetchAPI('/orders', {
-      method: 'POST',
-      body: JSON.stringify({
+    let newOrder;
+    try {
+      newOrder = await fetchAPI('/orders', {
+        method: 'POST',
+        body: JSON.stringify({
+          orderItems: items,
+          shippingAddress: { fullName, phone, address, city, state, postalCode },
+          paymentMethod,
+          couponCode: appliedCoupon?.code || ''
+        })
+      });
+    } catch (apiErr) {
+      console.warn('Backend order API note, creating local resilient order record:', apiErr.message);
+      const localId = 'ORD' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 6).toUpperCase();
+      newOrder = {
+        _id: localId,
         orderItems: items,
         shippingAddress: { fullName, phone, address, city, state, postalCode },
         paymentMethod,
-        couponCode: appliedCoupon?.code || ''
-      })
-    });
-  } catch (apiErr) {
-    console.warn('Backend order API note, creating local resilient order record:', apiErr.message);
-    const localId = 'ORD' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 6).toUpperCase();
-    newOrder = {
-      _id: localId,
-      orderItems: items,
-      shippingAddress: { fullName, phone, address, city, state, postalCode },
-      paymentMethod,
-      itemsPrice,
-      shippingPrice,
-      discountAmount,
-      couponCode: appliedCoupon?.code || '',
-      totalAmount,
-      status: 'Processing',
-      createdAt: new Date().toISOString()
-    };
-  }
+        itemsPrice,
+        shippingPrice,
+        discountAmount,
+        couponCode: appliedCoupon?.code || '',
+        totalAmount,
+        status: 'Processing',
+        createdAt: new Date().toISOString()
+      };
+    }
 
-  // Persist to local orders cache for guaranteed immediate rendering
-  const localOrders = JSON.parse(localStorage.getItem('arora_local_orders') || '[]');
-  localOrders.unshift(newOrder);
-  localStorage.setItem('arora_local_orders', JSON.stringify(localOrders));
+    // Persist to local orders cache for guaranteed immediate rendering
+    const localOrders = JSON.parse(localStorage.getItem('arora_local_orders') || '[]');
+    localOrders.unshift(newOrder);
+    localStorage.setItem('arora_local_orders', JSON.stringify(localOrders));
 
-  clearCart();
-  sessionStorage.removeItem('arora_coupon');
-  showToast('🎉 Order placed successfully! Thank you for shopping with AroraCart.', 'success');
+    clearCart();
+    sessionStorage.removeItem('arora_coupon');
+    showToast('Order placed successfully! Thank you for shopping with AroraCart.', 'success');
 
-  setTimeout(() => {
-    window.location.href = `/orders.html?newOrderId=${newOrder._id}`;
-  }, 1200);
+    setTimeout(() => {
+      window.location.href = `/orders.html?newOrderId=${newOrder._id}`;
+    }, 1200);
   } catch (err) {
     showError(errorEl, err.message || 'Failed to place order. Please try again.');
     if (placeBtn) {
       placeBtn.disabled = false;
-      const items = getCartItems();
-      const savedCoupon = sessionStorage.getItem('arora_coupon');
-      const ac = savedCoupon ? JSON.parse(savedCoupon) : null;
-      const ip = items.reduce((a,i) => a+i.price*i.quantity, 0);
-      const sp = ip>=1999?0:99;
-      const disc = ac?ac.discountAmount:0;
-      placeBtn.textContent = `🛍️ Place Order — ${formatINR(Math.max(0,ip+sp-disc))}`;
+      placeBtn.textContent = `Place Order — ${formatINR(totalAmount)}`;
     }
   }
 };
@@ -309,20 +314,20 @@ const updatePaymentMethodUI = (method) => {
   if (method === 'UPI Payment') {
     box.innerHTML = `
       <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.4rem;">
-        <span style="font-size:1.2rem;">📱</span>
-        <strong style="color:#38bdf8;">Instant UPI Gateway (Zero Surcharge)</strong>
+        <span style="font-size:1.1rem;">📱</span>
+        <strong style="color:var(--text-main);">Instant UPI Gateway (Zero Surcharge)</strong>
       </div>
-      <p style="color:#94a3b8;font-size:0.8rem;margin-bottom:0.6rem;">Enter UPI Virtual Payment Address (VPA) or scan QR code upon submission:</p>
+      <p style="color:var(--text-secondary);font-size:0.8rem;margin-bottom:0.6rem;">Enter UPI Virtual Payment Address (VPA) or scan QR code upon submission:</p>
       <div style="display:flex;gap:0.5rem;max-width:320px;">
         <input type="text" id="upi-vpa-input" class="form-control" placeholder="yourname@okhdfcbank" value="demo@arorapay" style="font-size:0.82rem;padding:0.4rem 0.6rem;" />
-        <button type="button" class="btn btn-outline btn-sm" onclick="showToast('UPI VPA Verified ✅ (GooglePay / PhonePe)', 'success')">Verify</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="showToast('UPI VPA Verified (GooglePay / PhonePe)', 'success')">Verify</button>
       </div>
     `;
   } else if (method === 'Debit/Credit Card') {
     box.innerHTML = `
       <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.4rem;">
-        <span style="font-size:1.2rem;">💳</span>
-        <strong style="color:#38bdf8;">Card Payment (RBI Tokenized &amp; 256-Bit SSL)</strong>
+        <span style="font-size:1.1rem;">💳</span>
+        <strong style="color:var(--text-main);">Card Payment (RBI Tokenized &amp; 256-Bit SSL)</strong>
       </div>
       <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0.5rem;margin-top:0.5rem;max-width:380px;">
         <input type="text" class="form-control" placeholder="Card Number" value="4532 •••• •••• 8892" style="font-size:0.82rem;padding:0.4rem 0.6rem;" />
@@ -331,7 +336,7 @@ const updatePaymentMethodUI = (method) => {
       </div>
     `;
   } else {
-    box.innerHTML = `💵 <strong>Cash on Delivery:</strong> Pay via cash or UPI to the delivery executive when your package arrives at your doorstep. Zero convenience fee.`;
+    box.innerHTML = `<strong>Cash on Delivery:</strong> Pay via cash or UPI to the delivery executive when your package arrives at your doorstep. Zero convenience fee.`;
   }
 };
 

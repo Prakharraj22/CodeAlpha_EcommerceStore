@@ -109,11 +109,12 @@ const renderProductDetail = (product, reviews) => {
       <div class="product-detail-info-col">
         <div class="product-meta-row">
           <span class="product-category">${product.category} · ${product.brand}</span>
-          ${product.isFeatured ? '<span class="featured-badge">⭐ Featured</span>' : ''}
+          ${product.isFeatured ? '<span class="featured-badge">Featured</span>' : ''}
         </div>
 
-        <div style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.78rem;font-weight:600;color:#f59e0b;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);padding:0.2rem 0.6rem;border-radius:var(--radius-full);margin-bottom:0.4rem;">
-          🔥 <strong>High Demand:</strong> 8 tech enthusiasts viewing this right now
+        <div style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.75rem;font-weight:600;color:var(--semantic-warning);background:var(--bg-surface-2);border:1px solid var(--border-subtle);padding:0.25rem 0.65rem;border-radius:var(--radius-full);margin-bottom:0.5rem;">
+          <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--semantic-warning);box-shadow:0 0 8px var(--semantic-warning);"></span>
+          <strong>High Demand:</strong> 8 tech enthusiasts viewing right now
         </div>
 
         <h1 class="product-detail-title">${product.title}</h1>
@@ -137,7 +138,7 @@ const renderProductDetail = (product, reviews) => {
 
         <div style="margin: 0.5rem 0 0.8rem;">
           <button type="button" class="btn-emi-link" onclick="openEmiModal(${product.price})">
-            💳 EMI from ₹${Math.round(product.price / 12).toLocaleString('en-IN')}/mo · View Bank Offers &amp; Cashbacks →
+            EMI from ₹${Math.round(product.price / 12).toLocaleString('en-IN')}/mo · Bank Offers &amp; Cashbacks →
           </button>
         </div>
 
@@ -147,10 +148,10 @@ const renderProductDetail = (product, reviews) => {
         <!-- Delivery Pincode Estimator -->
         <div class="pincode-estimator-card">
           <div class="pincode-estimator-title">
-            <span>🚚</span> Check Express Delivery Availability
+            Check Express Delivery Availability
           </div>
           <div class="pincode-input-row">
-            <input type="text" id="pincode-input" class="form-control pincode-input" placeholder="e.g. 110001" maxlength="6" />
+            <input type="text" id="pincode-input" class="form-control pincode-input" placeholder="Enter 6-digit Pincode" maxlength="6" />
             <button class="btn btn-outline btn-sm" onclick="checkPincodeDelivery()">Check</button>
           </div>
           <div id="pincode-result" class="pincode-result"></div>
@@ -197,7 +198,7 @@ const renderProductDetail = (product, reviews) => {
               ${product.stock <= 0 ? 'disabled' : ''}
               aria-label="Add to cart"
             >
-              🛒 Add to Cart
+              Add to Cart
             </button>
             <button
               class="btn btn-outline"
@@ -212,7 +213,7 @@ const renderProductDetail = (product, reviews) => {
               onclick="shareProduct('${product.title.replace(/'/g, "\\'")}')"
               aria-label="Share product"
             >
-              🔗 Share
+              Share
             </button>
           </div>
         </div>
@@ -220,13 +221,13 @@ const renderProductDetail = (product, reviews) => {
         <!-- Shipping & Guarantee Info -->
         <div class="shipping-info-card">
           <div class="shipping-row" onclick="openInfoModal('dispatch')" style="cursor:pointer;" title="Click for Shipping details">
-            <span class="shipping-icon">🚚</span> <strong>Free Shipping</strong> on orders over ₹1,999 <span style="color:#38bdf8;font-size:0.75rem;margin-left:auto;">Details →</span>
+            <span class="shipping-icon">🚚</span> <strong>Free Shipping</strong> on orders over ₹1,999 <span style="color:var(--text-secondary);font-size:0.75rem;margin-left:auto;">Details →</span>
           </div>
           <div class="shipping-row" onclick="openInfoModal('replacement')" style="cursor:pointer;" title="Click for Returns details">
-            <span class="shipping-icon">🔄</span> <strong>7-Day Returns</strong> — No questions asked <span style="color:#38bdf8;font-size:0.75rem;margin-left:auto;">Details →</span>
+            <span class="shipping-icon">🔄</span> <strong>7-Day Returns</strong> — No questions asked <span style="color:var(--text-secondary);font-size:0.75rem;margin-left:auto;">Details →</span>
           </div>
           <div class="shipping-row" onclick="openInfoModal('warranty')" style="cursor:pointer;" title="Click for Warranty details">
-            <span class="shipping-icon">🛡️</span> <strong>1-Year Brand Warranty</strong> — 100% authentic <span style="color:#38bdf8;font-size:0.75rem;margin-left:auto;">Details →</span>
+            <span class="shipping-icon">🛡️</span> <strong>1-Year Brand Warranty</strong> — 100% authentic <span style="color:var(--text-secondary);font-size:0.75rem;margin-left:auto;">Details →</span>
           </div>
         </div>
       </div>
